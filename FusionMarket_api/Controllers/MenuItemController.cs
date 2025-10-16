@@ -45,6 +45,7 @@ namespace FusionMarket_api.Controllers
             return Ok(_response);
         }
 
+
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> CreateMenuItem([FromForm] MenuItemCreateDTO menuItemCreateDTO)
         {
@@ -185,5 +186,55 @@ namespace FusionMarket_api.Controllers
             return BadRequest(_response);
         }
 
+
+        [HttpDelete]
+        public async Task<ActionResult<ApiResponse>> DeleteMenuItem(int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (id == 0)
+                    {
+                        _response.IsSuccess = false;
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        return BadRequest(_response);
+                    }
+
+                    MenuItem? menuItemFromDb = await _db.MenuItems.FirstOrDefaultAsync(u => u.Id == id);
+
+                    if (menuItemFromDb == null)
+                    {
+                        _response.IsSuccess = false;
+                        _response.StatusCode = HttpStatusCode.NotFound;
+                        return NotFound(_response);
+                    }
+
+                    var filePath_OldFile = Path.Combine(_env.WebRootPath, menuItemFromDb.Image);
+                    if (System.IO.File.Exists(filePath_OldFile))
+                    {
+                        System.IO.File.Delete(filePath_OldFile);
+                    }
+                    _db.MenuItems.Remove(menuItemFromDb);
+                    await _db.SaveChangesAsync();
+
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    return Ok(_response);
+
+                }
+                else
+                {
+                    _response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = [ex.ToString()];
+            }
+
+            return BadRequest(_response);
+        }
     }
 }
