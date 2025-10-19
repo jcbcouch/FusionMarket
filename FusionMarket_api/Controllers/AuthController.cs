@@ -1,11 +1,14 @@
 ﻿using System.Net;
 using FusionMarket_api.Models;
 using FusionMarket_api.Models.Dto;
+using FusionMarket_api.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FusionMarket_api.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : Controller
     {
 
@@ -38,6 +41,21 @@ namespace FusionMarket_api.Controllers
                 var result = await _userManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)
                 {
+                    if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
+                        await _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer));
+                    }
+
+                    if (model.Role.Equals(SD.Role_Admin, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        await _userManager.AddToRoleAsync(newUser, SD.Role_Admin);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
+                    }
+
                     _response.StatusCode = HttpStatusCode.OK;
                     _response.IsSuccess = true;
                     return Ok(_response);
