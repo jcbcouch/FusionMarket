@@ -50,6 +50,12 @@ namespace FusionMarket_api.Controllers
                 return BadRequest(_response);
             }
             MenuItem? menuItem = _db.MenuItems.FirstOrDefault(u => u.Id == id);
+            List<OrderDetail> orderDetailsWithRatings = _db.OrderDetails.Where(u => u.Rating != null && u.MenuItemId == menuItem.Id).ToList();
+
+
+            var ratings = orderDetailsWithRatings.Select(u => u.Rating.Value);
+            double avgRating = ratings.Any() ? ratings.Average() : 0;
+            menuItem.Rating = avgRating;
             _response.Result = menuItem;
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
