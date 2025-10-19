@@ -14,6 +14,9 @@ namespace FusionMarket_api.Data
         }
 
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
