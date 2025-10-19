@@ -14,7 +14,7 @@ namespace FusionMarket_api.Models.Dto
         public string ApplicationUserId { get; set; } = string.Empty;
 
         public double OrderTotal { get; set; }
-        public string Status { get; set; } = string.Empty;
+
         public int TotalItem { get; set; }
 
         public List<OrderDetailsCreateDTO> OrderDetailsDTO { get; set; } = new();
