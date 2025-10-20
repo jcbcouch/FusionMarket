@@ -3,12 +3,14 @@ using FusionMarket_api.Data;
 using FusionMarket_api.Models;
 using FusionMarket_api.Models.Dto;
 using FusionMarket_api.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FusionMarket_api.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class OrderHeaderController : Controller
     {
@@ -30,9 +32,21 @@ namespace FusionMarket_api.Controllers
             if (!string.IsNullOrEmpty(userId))
             {
                 orderHeaderList = orderHeaderList.Where(u => u.ApplicationUserId == userId);
+                _response.Result = orderHeaderList;
+            }
+            else
+            {
+                if (User.IsInRole(SD.Role_Admin))
+                {
+                    _response.Result = orderHeaderList;
+                }
+                else
+                {
+                    _response.Result = new List<OrderHeader>();
+                }
             }
 
-            _response.Result = orderHeaderList;
+
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
         }

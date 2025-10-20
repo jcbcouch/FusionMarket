@@ -2,11 +2,13 @@
 using FusionMarket_api.Data;
 using FusionMarket_api.Models;
 using FusionMarket_api.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FusionMarket_api.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class OrderDetailsController : Controller
     {

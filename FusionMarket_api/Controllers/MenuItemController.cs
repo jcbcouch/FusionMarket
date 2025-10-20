@@ -2,12 +2,15 @@
 using FusionMarket_api.Data;
 using FusionMarket_api.Models;
 using FusionMarket_api.Models.Dto;
+using FusionMarket_api.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FusionMarket_api.Controllers
 {
     [Route("api/MenuItem")]
+    [Authorize(Roles = SD.Role_Admin)]
     [ApiController]
     public class MenuItemController : Controller
     {
@@ -23,6 +26,7 @@ namespace FusionMarket_api.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetMenuItems()
         {
             List<MenuItem> menuItems = _db.MenuItems.ToList();
@@ -41,6 +45,7 @@ namespace FusionMarket_api.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetMenuItem")]
+        [AllowAnonymous]
         public IActionResult GetMenuItem(int id)
         {
             if (id == 0)
